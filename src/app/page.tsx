@@ -1,27 +1,28 @@
-async function getPosts() {
-  const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  console.log(apiUrl);
-  const res = await fetch(`${apiUrl}/api/posts`, {
-    cache: "no-store",
-  });
-  console.log("res", res);
-  if (!res.ok) {
-    throw new Error("failed to fetch in front");
-  }
+import { prisma } from "@/lib/prisma";
 
-  return res.json();
-}
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
-  const posts = await getPosts();
-  console.log("posts", posts);
+  const posts = await prisma.posts.findMany({
+    include: {
+      Category: true,
+    },
+  });
+
   return (
     <div>
-      {posts.map((posts: { id: number; title: string; content: string }) => (
-        <div key={posts.id} className="text-white">
-          hello
+      <h1 className="">Blog Posts</h1>
+      {posts.map((post) => (
+        <div key={post.id} className="text-black mt-9">
+          <h2 className="font-bold ">{post.title}</h2>
+          <p>{post.content}</p>
+
+          <span className="border border-gray-300">
+            {post.Category?.name || "Uncategorized"} •{" "}
+            {new Date(post.createdAt).toLocaleDateString("es-Es")}
+          </span>
         </div>
       ))}
-      <h1>hello world </h1>
     </div>
   );
 }

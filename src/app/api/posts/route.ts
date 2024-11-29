@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { title, content, categoryId } = body;
+    const { title, content, category } = body;
 
     if (!title || !content) {
       return NextResponse.json(
@@ -19,11 +19,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const categoryRecord = await prisma.category.upsert({
+      where: { name: category },
+      update: {},
+      create: { name: category },
+    });
+
     const newPost = await prisma.posts.create({
       data: {
         title,
         content,
-        categoryId,
+        categoryId: categoryRecord.id,
       },
     });
 
