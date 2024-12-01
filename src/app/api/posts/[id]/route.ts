@@ -7,7 +7,6 @@ export async function PUT(
 ) {
   const { title, content, categoryName } = await request.json();
   const { id } = await params;
-  console.log(title, content, categoryName);
 
   try {
     const category = await prisma.category.upsert({
@@ -28,6 +27,25 @@ export async function PUT(
     console.error("Error updating post or category", error);
     return NextResponse.json(
       { error: "Failed to update post or category" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } },
+) {
+  const { id } = await params;
+  try {
+    const deletedPost = await prisma.posts.delete({
+      where: { id: parseInt(id, 10) },
+    });
+    return NextResponse.json(deletedPost, { status: 200 });
+  } catch (error) {
+    console.error("Error deleting the post", error);
+    return NextResponse.json(
+      { error: "failed to delete post" },
       { status: 500 },
     );
   }

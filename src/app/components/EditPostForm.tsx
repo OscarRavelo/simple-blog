@@ -1,5 +1,6 @@
 "use client";
 export default function EditPostPage({ post }: { post: any }) {
+  console.log("post", post);
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -32,7 +33,7 @@ export default function EditPostPage({ post }: { post: any }) {
       <textarea name="content" defaultValue={post.content}></textarea>
       <input
         name="categoryName"
-        defaultValue={post.categoryId?.id || "sin categorizar"}
+        defaultValue={post.Category?.name || "sin categorizar"}
       />
       <button type="submit">Update Post</button>
     </form>
